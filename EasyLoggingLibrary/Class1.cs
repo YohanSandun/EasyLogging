@@ -2,11 +2,17 @@
 
 namespace EasyLoggingLibrary
 {
+    /// <summary>
+    /// Represents log entry level.
+    /// </summary>
     public enum LogLevel
     {
         FATAL, ERROR, INFO, WARN, DEBUG, TRACE
     }
 
+    /// <summary>
+    /// You can write log entries to files using this class.
+    /// </summary>
     public class FileLogger
     {
         // Where log files will get created
@@ -25,7 +31,14 @@ namespace EasyLoggingLibrary
         private FileStream _currentStream;
         private bool _logOpened = false;
 
-  
+        /// <summary>
+        /// Initializes a new instance of <c>FileLogger</c> with given parameters.
+        /// </summary>
+        /// <param name="path">Path to save log files. This path should be pointing to a directory not to a file.</param>
+        /// <param name="fileNamePattern">File name pattern for the log files. This will get formatted using DateTime.ToString().</param>
+        /// <param name="fileExtention">File extention for the log files.</param>
+        /// <param name="timestampPattern">Timestamp pattern for each log entry. This will get formatted using DateTime.ToString().</param>
+        /// <param name="maxEntries">Maximum number of log entries per file. Once the limit reached, LogSwitch will take a place.</param>
         public FileLogger(string path, string fileNamePattern = "dd-MM-yyyy HH-mm-ss", string fileExtention = ".txt", string timestampPattern = "HH:mm:ss", int maxEntries = 1000)
         {
             _path = path.EndsWith('\\') ? path : path + '\\';
@@ -36,9 +49,21 @@ namespace EasyLoggingLibrary
             openLog();
         }
 
+        /// <summary>
+        /// Returns the current path where log files are written to.
+        /// </summary>
         public string Path { get { return _path; } }
+
+        /// <summary>
+        /// Returns file name pattern of log files.
+        /// </summary>
         public string FileNamePattern { get { return _fileNamePattern; } }
 
+        /// <summary>
+        /// Write a log entry using a message and log level.
+        /// </summary>
+        /// <param name="message">Message to be written to the log file.</param>
+        /// <param name="level">Level of the log entry.</param>
         public void WriteLog(string message, LogLevel level)
         {
             if (!_logOpened)
@@ -59,6 +84,11 @@ namespace EasyLoggingLibrary
             _entries++;
         }
 
+        /// <summary>
+        /// Write a log entry using an exception. This will write two log entries.
+        /// [ERROR] will contain information about the exception while [TRACE] will contain stack trace of the problem.
+        /// </summary>
+        /// <param name="exception"></param>
         public void WriteLog(Exception exception)
         {
             if (!_logOpened)
@@ -89,6 +119,9 @@ namespace EasyLoggingLibrary
             _entries++;
         }
 
+        /// <summary>
+        /// Open a new log file.
+        /// </summary>
         private void openLog()
         {
             string previousFile = _currentLogFile;
@@ -101,6 +134,9 @@ namespace EasyLoggingLibrary
             _logOpened = true;
         }
 
+        /// <summary>
+        /// Close the current log file.
+        /// </summary>
         public void CloseLog()
         {
             _logOpened = false;
@@ -108,6 +144,9 @@ namespace EasyLoggingLibrary
             _currentStream.Close();
         }
 
+        /// <summary>
+        /// Switch the current log file. This will first close the current opened log file and the open a new one.
+        /// </summary>
         public void LogSwitch()
         {
             CloseLog();
