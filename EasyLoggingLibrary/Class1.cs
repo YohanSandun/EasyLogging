@@ -15,6 +15,8 @@ namespace EasyLoggingLibrary
         // Formatted using DateTime.Now.ToString();
         private string _fileNamePattern;
         private string _fileExtention;
+        private string _timestampPattern;
+
         // Maximum entries per log file
         private int _maxEntries;
         private int _entries = 0;
@@ -23,12 +25,14 @@ namespace EasyLoggingLibrary
         private FileStream _currentStream;
         private bool _logOpened = false;
 
-        public FileLogger(string path, string fileNamePattern = "dd-MM-yyyy HH-mm-ss", string fileExtention = ".txt", int maxEntries = 1000)
+  
+        public FileLogger(string path, string fileNamePattern = "dd-MM-yyyy HH-mm-ss", string fileExtention = ".txt", string timestampPattern = "HH:mm:ss", int maxEntries = 1000)
         {
             _path = path.EndsWith('\\') ? path : path + '\\';
             _fileNamePattern = fileNamePattern;
             _fileExtention = fileExtention;
             _maxEntries = maxEntries;
+            _timestampPattern = timestampPattern;
             openLog();
         }
 
@@ -44,7 +48,7 @@ namespace EasyLoggingLibrary
                 LogSwitch();
 
             StringBuilder sb = new StringBuilder();
-            sb.Append(DateTime.Now.ToString("HH:mm:ss"));
+            sb.Append(DateTime.Now.ToString(_timestampPattern));
             sb.Append(" [ ");
             sb.Append(level.ToString());
             sb.Append(" ]\t");
@@ -64,7 +68,7 @@ namespace EasyLoggingLibrary
                 LogSwitch();
 
             StringBuilder sb = new StringBuilder();
-            sb.Append(DateTime.Now.ToString("HH:mm:ss"));
+            sb.Append(DateTime.Now.ToString(_timestampPattern));
             sb.Append(" [ ERROR ]\t");
             sb.Append("HResult: ");
             sb.Append(exception.HResult);
